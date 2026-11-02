@@ -1,0 +1,56 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "caseParameters"
+
+application     buoyantPimpleFoam;
+
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         $endTime;
+
+deltaT          $deltaT0;
+adjustTimeStep  yes;
+maxCo           $maxCo;
+maxDeltaT       $maxDeltaT;
+
+// Full fields are written rarely; animation frames come from "frames" below
+writeControl    adjustableRunTime;
+writeInterval   $fieldWriteInterval;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+
+runTimeModifiable true;
+
+functions
+{
+    frames
+    {
+        type            writeObjects;
+        libs            (utilityFunctionObjects);
+        objects         (T);
+        writeControl    adjustableRunTime;
+        writeInterval   $frameDt;
+    }
+}
+
+// ************************************************************************* //

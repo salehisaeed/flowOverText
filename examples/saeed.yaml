@@ -1,0 +1,39 @@
+# flowOverText run configuration
+# Anything left out takes the defaults listed in flowOverText.py (DEFAULTS).
+# Run:  ./flowOverText.py examples/saeed.yaml --run
+
+geometry:
+  text: Saeed                       # one line of text ...
+  # svg: LiU.svg                    # ... or an SVG logo (path relative to this file)
+  font: "Inter Display:black"       # fontconfig pattern or a font file; 'fc-list : family style'
+
+mode: forced                        # forced | convection
+
+forced:
+  Re: 1000                          # U H / nu, H = total text height
+  endTime: 30                       # H/U
+  frameDt: 0.04                     # H/U between frames
+
+convection:
+  Ra: 1.0e7                         # g beta dT H^3 / (nu alpha)
+  Pr: 0.71
+  endTime: 40                       # free-fall times
+  framesPerTff: 20
+
+mesh:
+  cells: 100000                     # target number of 2D cells (budget)
+
+run:
+  np: 16
+  cleanup: true                     # delete field data once the movie is made
+
+render:                             # style of the TMMV64 wake pictures
+  width: 1920                       # pixels
+  fps: 30
+  bands: 24                         # colour bands per sign (course: 6)
+  # cmap: inferno_r                 # default: forced RdBu_r, convection inferno_r
+  # lines: true                     # contour lines (default: forced on, convection off)
+  dashed: false                     # dashed lines for negative values
+  svg: last                         # vector frames: none | last | all | every N
+  # lim: 6                          # strongest band (forced: vorticity H/U, convection: theta)
+  # view: [-1, 12, -3.5, 3.5]       # window in units of H (default: per mode)

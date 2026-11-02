@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "<system>/caseParameters"
+
+// Boussinesq fluid; mu is set from the Rayleigh number in caseParameters
+
+dpdt            no;
+thermoType
+{
+    type            heRhoThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState Boussinesq;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        molWeight       28.9;
+    }
+    equationOfState
+    {
+        rho0            $rho0;
+        T0              $Tcold;
+        beta            $beta;
+    }
+    thermodynamics
+    {
+        Cp              $Cp;
+        Hf              0;
+    }
+    transport
+    {
+        mu              $mu;
+        Pr              $Pr;
+    }
+}
+
+// ************************************************************************* //

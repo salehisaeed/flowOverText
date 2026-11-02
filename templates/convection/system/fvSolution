@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "rho.*"
+    {
+        solver          diagonal;
+    }
+
+    p_rgh
+    {
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       1e-6;       // p_rgh ~ 1e5 Pa: tighter stalls at round-off
+        relTol          0.01;
+        maxIter         100;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
+    }
+
+    "(U|h)"
+    {
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+    }
+
+    "(U|h)Final"
+    {
+        $U;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor   yes;
+    nOuterCorrectors    1;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 1;
+}
+
+// ************************************************************************* //

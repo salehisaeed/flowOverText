@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      surfaceFeatureExtractDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+text.stl
+{
+    extractionMethod    extractFromSurface;
+
+    // Letter corners (vertical edges of the extruded outline)
+    includedAngle       150;
+
+    subsetFeatures
+    {
+        // The open edges lie outside the domain (in front/behind it)
+        openEdges       no;
+        nonManifoldEdges no;
+    }
+
+    writeObj            no;
+}
+
+// ************************************************************************* //

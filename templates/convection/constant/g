@@ -1,0 +1,23 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       uniformDimensionedVectorField;
+    location    "constant";
+    object      g;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "<system>/caseParameters"
+
+dimensions      [0 1 -2 0 0 0 0];
+value           $gravity;
+
+// ************************************************************************* //

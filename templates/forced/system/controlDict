@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "caseParameters"
+
+application     pimpleFoam;
+
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         $endTime;
+
+deltaT          $deltaT0;
+adjustTimeStep  yes;
+maxCo           $maxCo;
+
+// Full fields are written rarely; animation frames come from "frames" below
+writeControl    adjustableRunTime;
+writeInterval   $fieldWriteInterval;
+purgeWrite      0;
+writeFormat     binary;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+
+runTimeModifiable true;
+
+functions
+{
+    vorticity
+    {
+        type            vorticity;
+        libs            (fieldFunctionObjects);
+        field           U;
+        writeControl    none;
+    }
+
+    // Out-of-plane vorticity, the scalar that is animated
+    vortZ
+    {
+        type            exprField;
+        libs            (fieldFunctionObjects);
+        field           vortZ;
+        expression      "vorticity.z()";
+        dimensions      [0 0 -1 0 0 0 0];
+        writeControl    none;
+    }
+
+    frames
+    {
+        type            writeObjects;
+        libs            (utilityFunctionObjects);
+        objects         (vortZ);
+        writeControl    adjustableRunTime;
+        writeInterval   $frameDt;
+    }
+
+    forceCoeffs
+    {
+        type            forceCoeffs;
+        libs            (forces);
+        patches         (text);
+        rho             rhoInf;
+        rhoInf          1;
+        CofR            (0 0 0);
+        liftDir         (0 1 0);
+        dragDir         (1 0 0);
+        pitchAxis       (0 0 1);
+        magUInf         $Uref;
+        lRef            $Href;
+        Aref            $Aref;
+        writeControl    timeStep;
+        writeInterval   1;
+        log             false;
+    }
+}
+
+// ************************************************************************* //

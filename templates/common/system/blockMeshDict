@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "caseParameters"
+
+scale   1;
+
+vertices
+(
+    ($xMin $yMin $zMin)
+    ($xMax $yMin $zMin)
+    ($xMax $yMax $zMin)
+    ($xMin $yMax $zMin)
+    ($xMin $yMin $zMax)
+    ($xMax $yMin $zMax)
+    ($xMax $yMax $zMax)
+    ($xMin $yMax $zMax)
+);
+
+blocks
+(
+    // Uniform core (the animation window) at the bulk cell size, graded to
+    // the far field
+    hex (0 1 2 3 4 5 6 7) ($nx $ny 1) simpleGrading ($xGrading $yGrading 1)
+);
+
+boundary
+(
+    $patchXMin
+    {
+        type $patchXMinType;
+        faces ((0 4 7 3));
+    }
+    $patchXMax
+    {
+        type $patchXMaxType;
+        faces ((1 2 6 5));
+    }
+    $patchYMin
+    {
+        type $patchYMinType;
+        faces ((0 1 5 4));
+    }
+    $patchYMax
+    {
+        type $patchYMaxType;
+        faces ((3 7 6 2));
+    }
+    back
+    {
+        type patch;
+        faces ((0 3 2 1));
+    }
+    front
+    {
+        type patch;
+        faces ((4 5 6 7));
+    }
+);
+
+// ************************************************************************* //

@@ -1,0 +1,9 @@
+# The LiU logo, natural convection
+# (run.cleanup off: keep the data to try different colours/framings)
+geometry:
+  svg: LiU.svg
+mode: convection
+convection:
+  Ra: 1.0e7
+run:
+  cleanup: false

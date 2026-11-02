@@ -1,0 +1,48 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+# Mesh: blockMesh -> snappyHexMesh (parallel) -> collapse to one 2D layer
+
+runApplication blockMesh
+
+runApplication surfaceFeatureExtract
+
+runApplication -s snappy decomposePar -force
+
+runParallel snappyHexMesh -overwrite
+
+runApplication reconstructParMesh -constant
+
+rm -rf processor*
+
+# snappyHexMesh refines through the thickness as well; re-extrude the back
+# patch into a single cell layer to get a clean 2D mesh
+runApplication extrudeMesh
+
+rm -f constant/polyMesh/cellLevel constant/polyMesh/pointLevel \
+      constant/polyMesh/level0Edge constant/polyMesh/surfaceIndex \
+      constant/polyMesh/refinementHistory
+rm -rf constant/polyMesh/sets
+
+for patch in front back
+do
+    foamDictionary constant/polyMesh/boundary \
+        -entry entry0/$patch/type -set empty > /dev/null 2>&1
+    foamDictionary constant/polyMesh/boundary \
+        -entry entry0/$patch/inGroups -remove > /dev/null 2>&1
+done
+
+runApplication checkMesh
+
+#------------------------------------------------------------------------------
+# Fields and decomposition for the solver
+
+restore0Dir
+
+runApplication decomposePar -force
+
+# Cell (and boundary face) centres, used by the renderer
+runParallel postProcess -func writeCellCentres -time 0
+
+#------------------------------------------------------------------------------

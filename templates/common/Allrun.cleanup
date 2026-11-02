@@ -1,0 +1,18 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+#------------------------------------------------------------------------------
+# Remove the bulky data once the animation exists; keeps the movie, the SVG
+# frames, postProcessing and the case setup (re-run with Allrun.pre/run)
+
+if ! ls animation/*.mp4 > /dev/null 2>&1
+then
+    echo "No movie in animation/, not cleaning up"
+    exit 1
+fi
+
+rm -rf processor* animation/frames constant/polyMesh \
+       constant/extendedFeatureEdgeMesh constant/triSurface/*.eMesh 0 [1-9]* log.*
+
+du -sh .
+
+#------------------------------------------------------------------------------

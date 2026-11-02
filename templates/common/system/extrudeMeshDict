@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | flowOverText                                    |
+|   \\  /    A nd           |                                                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      extrudeMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "caseParameters"
+
+// Collapse the snappyHexMesh result (refined through its thickness) to a
+// single-cell 2D mesh by re-extruding its back patch.
+
+constructFrom   patch;
+sourceCase      "<case>";
+sourcePatches   (back);
+exposedPatchName front;
+
+flipNormals     false;
+
+extrudeModel    linearNormal;
+nLayers         1;
+expansionRatio  1.0;
+
+linearNormalCoeffs
+{
+    thickness   $zThickness;
+}
+
+mergeFaces      false;
+mergeTol        0;
+
+// ************************************************************************* //
